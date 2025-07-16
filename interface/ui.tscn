@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://cusci4h5y66kd"]
+
+[node name="UI" type="Node2D"]
+
+[node name="ear_power" type="HScrollBar" parent="."]
+offset_right = 348.0
+offset_bottom = 42.0
+value = 50.0

@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://dkauhonwa2xo3"]
+
+[ext_resource type="PackedScene" uid="uid://dy2oq8bnl2gb8" path="res://levels/bits/platform_1.tscn" id="1_osvbh"]
+
+[node name="level_1_brain" type="Node3D"]
+
+[node name="platform_1" parent="." instance=ExtResource("1_osvbh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.77837, 0)
+
+[node name="platform_2" parent="." instance=ExtResource("1_osvbh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.77837, 6.62565)
+
+[node name="platform_3" parent="." instance=ExtResource("1_osvbh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.77837, 13.3177)
