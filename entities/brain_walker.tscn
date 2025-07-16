@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://cvrbj2ev3xxci"]
+
+[ext_resource type="PackedScene" uid="uid://chnuroc4smvjv" path="res://entities/bits/brain_mesh.tscn" id="1_lqkhv"]
+[ext_resource type="Script" uid="uid://yuepbx88hcnk" path="res://entities/brain_walker.gd" id="1_wb4lt"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_wb4lt"]
+radius = 0.53
+height = 1.325
+
+[node name="brain_walker" type="CharacterBody3D"]
+script = ExtResource("1_wb4lt")
+
+[node name="MeshInstance3D" parent="." instance=ExtResource("1_lqkhv")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+shape = SubResource("CapsuleShape3D_wb4lt")
+
+[node name="ear_worm" type="AudioStreamPlayer" parent="."]
+autoplay = true
+
+[node name="piv" type="Node3D" parent="."]
+
+[node name="SpringArm3D" type="SpringArm3D" parent="piv"]
+
+[node name="Camera3D" type="Camera3D" parent="piv/SpringArm3D"]
