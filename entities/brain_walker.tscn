@@ -1,20 +1,25 @@
-[gd_scene load_steps=4 format=3 uid="uid://cvrbj2ev3xxci"]
+[gd_scene load_steps=9 format=3 uid="uid://cvrbj2ev3xxci"]
 
 [ext_resource type="PackedScene" uid="uid://chnuroc4smvjv" path="res://entities/bits/brain_mesh.tscn" id="1_lqkhv"]
 [ext_resource type="Script" uid="uid://yuepbx88hcnk" path="res://entities/brain_walker.gd" id="1_wb4lt"]
+[ext_resource type="Script" uid="uid://lxkxt6c3xo3e" path="res://entities/bits/legs.gd" id="3_qf6st"]
+[ext_resource type="AudioStream" uid="uid://h0t44k24ssa4" path="res://audio/player_die.wav" id="4_pcwwf"]
+[ext_resource type="AudioStream" uid="uid://nh5tcl3dr3v8" path="res://audio/player_toe_tip.wav" id="5_wtkin"]
+[ext_resource type="AudioStream" uid="uid://cyfkojsywoyr2" path="res://audio/sword.wav" id="6_wtkin"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_wb4lt"]
-radius = 0.53
-height = 1.325
+[sub_resource type="BoxShape3D" id="BoxShape3D_wtkin"]
+size = Vector3(0.47, 0.665, 0.355)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_wtkin"]
 
 [node name="brain_walker" type="CharacterBody3D"]
 script = ExtResource("1_wb4lt")
 
-[node name="MeshInstance3D" parent="." instance=ExtResource("1_lqkhv")]
+[node name="mesh" parent="." instance=ExtResource("1_lqkhv")]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
-shape = SubResource("CapsuleShape3D_wb4lt")
+[node name="legs" type="Node3D" parent="mesh"]
+transform = Transform3D(-1, -8.74228e-08, 3.82137e-15, 0, -4.37114e-08, -1, 8.74228e-08, -1, 4.37114e-08, 0.0646541, 1.88716e-08, 0.431731)
+script = ExtResource("3_qf6st")
 
 [node name="ear_worm" type="AudioStreamPlayer" parent="."]
 autoplay = true
@@ -24,3 +29,27 @@ autoplay = true
 [node name="SpringArm3D" type="SpringArm3D" parent="piv"]
 
 [node name="Camera3D" type="Camera3D" parent="piv/SpringArm3D"]
+
+[node name="sounds" type="Node3D" parent="."]
+
+[node name="hurt" type="AudioStreamPlayer3D" parent="sounds"]
+stream = ExtResource("4_pcwwf")
+
+[node name="jump" type="AudioStreamPlayer3D" parent="sounds"]
+
+[node name="land" type="AudioStreamPlayer3D" parent="sounds"]
+stream = ExtResource("5_wtkin")
+
+[node name="attack_good" type="AudioStreamPlayer3D" parent="sounds"]
+stream = ExtResource("6_wtkin")
+
+[node name="attack_bad" type="AudioStreamPlayer3D" parent="sounds"]
+stream = ExtResource("5_wtkin")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.557593, 0)
+shape = SubResource("BoxShape3D_wtkin")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+shape = SubResource("SphereShape3D_wtkin")

@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://cr4x7sx7v2i0c"]
+[gd_scene load_steps=5 format=3 uid="uid://cr4x7sx7v2i0c"]
 
 [ext_resource type="PackedScene" uid="uid://dkauhonwa2xo3" path="res://levels/level_1_brain.tscn" id="1_pq8q7"]
 [ext_resource type="PackedScene" uid="uid://cvrbj2ev3xxci" path="res://entities/brain_walker.tscn" id="2_pyidc"]
 [ext_resource type="PackedScene" uid="uid://cusci4h5y66kd" path="res://interface/ui.tscn" id="3_vvh5c"]
+[ext_resource type="PackedScene" uid="uid://cp3tfcsdvqea1" path="res://entities/chicken_spirit.tscn" id="4_28aoi"]
 
 [node name="root" type="Node3D"]
 
@@ -10,6 +11,9 @@
 
 [node name="level_1_brain" parent="level" instance=ExtResource("1_pq8q7")]
 
-[node name="brain_walker" parent="." instance=ExtResource("2_pyidc")]
+[node name="player" parent="." instance=ExtResource("2_pyidc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.03101, 0)
 
 [node name="UI" parent="." instance=ExtResource("3_vvh5c")]
+
+[node name="chicken_spirit" parent="." instance=ExtResource("4_28aoi")]

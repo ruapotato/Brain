@@ -3,8 +3,8 @@
 [ext_resource type="Material" uid="uid://d1bnil14tbabk" path="res://native/brain.tres" id="1_ehl23"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_e6i00"]
-radius = 0.46
-height = 1.27
+radius = 0.275
+height = 1.03
 
 [node name="MeshInstance3D" type="MeshInstance3D"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -0.0646541, 0, 0)
