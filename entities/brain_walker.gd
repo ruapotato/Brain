@@ -17,6 +17,7 @@ var action_state = ActionState.IDLE
 
 # --- Rhythm & Beat Variables ---
 @onready var ear_worm = $ear_worm
+@onready var brain_light = $brain_light
 var beat_times = []
 var current_beat_accuracy: float = 0.0
 var next_beat_index: int = 0
@@ -70,6 +71,10 @@ func _ready():
 
 func update_ui():
 	UI_ear_power.value = current_beat_accuracy * 100
+	if current_beat_accuracy > .9:
+		brain_light.light_energy = 3
+	else:
+		brain_light.light_energy = .1
 
 func _process(delta: float) -> void:
 	update_ui()
