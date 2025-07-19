@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cvrbj2ev3xxci"]
+[gd_scene load_steps=16 format=3 uid="uid://cvrbj2ev3xxci"]
 
 [ext_resource type="PackedScene" uid="uid://chnuroc4smvjv" path="res://entities/bits/brain_mesh.tscn" id="1_lqkhv"]
 [ext_resource type="Script" uid="uid://yuepbx88hcnk" path="res://entities/brain_walker.gd" id="1_wb4lt"]
@@ -6,6 +6,29 @@
 [ext_resource type="AudioStream" uid="uid://h0t44k24ssa4" path="res://audio/player_die.wav" id="4_pcwwf"]
 [ext_resource type="AudioStream" uid="uid://nh5tcl3dr3v8" path="res://audio/player_toe_tip.wav" id="5_wtkin"]
 [ext_resource type="AudioStream" uid="uid://cyfkojsywoyr2" path="res://audio/sword.wav" id="6_wtkin"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_k64bv"]
+radius = 1.0
+
+[sub_resource type="Gradient" id="Gradient_wtkin"]
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_k64bv"]
+gradient = SubResource("Gradient_wtkin")
+
+[sub_resource type="Curve" id="Curve_wtkin"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.316177, 0.629214), -3.28256, -3.28256, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_k64bv"]
+curve = SubResource("Curve_wtkin")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_squdk"]
+spread = 0.0
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("CurveTexture_k64bv")
+color_ramp = SubResource("GradientTexture1D_k64bv")
+
+[sub_resource type="SphereMesh" id="SphereMesh_squdk"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wtkin"]
 size = Vector3(0.47, 0.665, 0.355)
@@ -20,6 +43,22 @@ script = ExtResource("1_wb4lt")
 [node name="legs" type="Node3D" parent="mesh"]
 transform = Transform3D(-1, -8.74228e-08, 3.82137e-15, 0, -4.37114e-08, -1, 8.74228e-08, -1, 4.37114e-08, 0.0646541, 1.88716e-08, 0.431731)
 script = ExtResource("3_qf6st")
+
+[node name="psychic_swipe_area" type="Area3D" parent="mesh"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0.0646541, 1.58182, -6.91436e-08)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="mesh/psychic_swipe_area"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.832595)
+shape = SubResource("SphereShape3D_k64bv")
+
+[node name="swipe_vfx" type="GPUParticles3D" parent="mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.810736, -3.54384e-08)
+emitting = false
+amount = 1
+lifetime = 0.3
+one_shot = true
+process_material = SubResource("ParticleProcessMaterial_squdk")
+draw_pass_1 = SubResource("SphereMesh_squdk")
 
 [node name="ear_worm" type="AudioStreamPlayer" parent="."]
 autoplay = true

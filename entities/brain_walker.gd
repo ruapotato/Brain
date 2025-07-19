@@ -31,6 +31,14 @@ const PERFECT_RATIO = 0.25 # Perfect window is 25% of the hittable window
 const GREAT_RATIO = 0.50   # Great window is 50% of the hittable window
 const GOOD_RATIO = 1.00    # Good window is 100% of the hittable window
 
+# --- Attack Properties ---
+const PERFECT_SWIPE_RADIUS = 8.0
+const PERFECT_SWIPE_POWER = 1.0
+const GREAT_SWIPE_RADIUS = 6.0
+const GREAT_SWIPE_POWER = 0.7
+const GOOD_SWIPE_RADIUS = 4.0
+const GOOD_SWIPE_POWER = 0.4
+
 # --- Timers & Buffers ---
 const JUMP_BUFFER_TIME = 0.1
 const COYOTE_TIME = 0.1
@@ -50,6 +58,8 @@ var is_invulnerable = false
 @onready var land_sound = $sounds/land
 @onready var attack_sound_good = $sounds/attack_good
 @onready var attack_sound_bad = $sounds/attack_bad
+@onready var psychic_swipe_area = $mesh/psychic_swipe_area
+@onready var swipe_vfx = $mesh/swipe_vfx # VFX node for the swipe
 
 # Get the gravity from project settings
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -159,24 +169,59 @@ func perform_jump():
 func perform_psychic_swipe():
 	action_state = ActionState.ATTACK
 	
-	# *** NEW RHYTHM MECHANIC INTEGRATION ***
-	# Get the judgment based on the timing windows.
 	var judgment = get_hit_judgment()
-	last_hit_judgment = judgment # Store for other game logic if needed
+	last_hit_judgment = judgment
 	
-	# Check the judgment to determine the attack's quality.
-	if judgment == "Perfect" or judgment == "Great":
-		print("ON-BEAT SWIPE! Judgment: ", judgment)
-		attack_sound_good.play()
-		# --- TODO: Trigger your powerful, wide-arc attack animation/effect here ---
-	elif judgment == "Good":
-		print("Okay swipe. Judgment: ", judgment)
-		attack_sound_good.play() # Maybe a slightly less impactful sound?
-		# --- TODO: Trigger a standard attack ---
-	else: # Miss
-		print("Off-beat swipe. Judgment: ", judgment)
-		attack_sound_bad.play()
-		# --- TODO: Trigger your weak, small fizzle effect here ---
+	var swipe_radius = 0.0
+	var swipe_power = 0.0
+	
+	match judgment:
+		"Perfect":
+			print("PERFECT SWIPE!")
+			attack_sound_good.play()
+			swipe_radius = PERFECT_SWIPE_RADIUS
+			swipe_power = PERFECT_SWIPE_POWER
+			trigger_swipe_vfx(swipe_radius, Color.GOLD)
+		"Great":
+			print("GREAT SWIPE!")
+			attack_sound_good.play()
+			swipe_radius = GREAT_SWIPE_RADIUS
+			swipe_power = GREAT_SWIPE_POWER
+			trigger_swipe_vfx(swipe_radius, Color.CYAN)
+		"Good":
+			print("Good swipe.")
+			attack_sound_good.play()
+			swipe_radius = GOOD_SWIPE_RADIUS
+			swipe_power = GOOD_SWIPE_POWER
+			trigger_swipe_vfx(swipe_radius, Color.WHITE)
+		_: # Miss
+			print("Off-beat swipe... Miss.")
+			attack_sound_bad.play()
+			# Optionally, trigger a small "fizzle" effect for a miss
+			# trigger_swipe_vfx(1.0, Color.GRAY) 
+			return
+
+	# --- Find and damage enemies within the swipe radius ---
+	var bodies = psychic_swipe_area.get_overlapping_bodies()
+	for body in bodies:
+		if body == self: # Don't hit yourself
+			continue
+		
+		if global_position.distance_to(body.global_position) <= swipe_radius:
+			var knockback_direction = (body.global_position - global_position).normalized()
+			if "damage" in body:
+				body.damage(swipe_power, knockback_direction)
+
+
+func trigger_swipe_vfx(radius: float, color: Color):
+	# Set the color of the particles
+	var material = swipe_vfx.process_material as ParticleProcessMaterial
+	material.color = color
+	
+	# Reset and restart the particle system
+	swipe_vfx.scale = Vector3.ONE * radius
+	swipe_vfx.restart()
+
 
 func take_damage(knockback_direction: Vector3):
 	if is_invulnerable:
