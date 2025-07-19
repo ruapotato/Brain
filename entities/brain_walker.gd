@@ -16,12 +16,20 @@ enum ActionState { IDLE, WALK, JUMP, ATTACK, HURT }
 var action_state = ActionState.IDLE
 
 # --- Rhythm & Beat Variables ---
+@export_range(0.1, 1.0) var hittable_window_ratio: float = 0.6 # Percentage of the beat interval that is hittable
 @onready var ear_worm = $ear_worm
 @onready var brain_light = $brain_light
 var beat_times = []
-var current_beat_accuracy: float = 0.0
+var hit_beat_indices: Array = [] # Tracks indices of beats that have been successfully hit
+var current_beat_accuracy: float = 0.0 # This will now represent the "power" for the UI
+var last_hit_judgment: String = "Miss" # Stores the result of the last attack
 var next_beat_index: int = 0
-var default_worm = preload("res://music/brain.wav") # Make sure your music file is here
+var default_worm = preload("res://music/brain.wav")
+
+# --- Timing Window Ratios (relative to the dynamic hittable window) ---
+const PERFECT_RATIO = 0.25 # Perfect window is 25% of the hittable window
+const GREAT_RATIO = 0.50   # Great window is 50% of the hittable window
+const GOOD_RATIO = 1.00    # Good window is 100% of the hittable window
 
 # --- Timers & Buffers ---
 const JUMP_BUFFER_TIME = 0.1
@@ -36,17 +44,17 @@ var is_invulnerable = false
 # --- Node References ---
 @onready var cam_piv = $piv
 @onready var camera_arm = $piv/SpringArm3D
-@onready var mesh = $mesh # This should be your brain model
+@onready var mesh = $mesh
 @onready var hurt_sound = $sounds/hurt
 @onready var jump_sound = $sounds/jump
 @onready var land_sound = $sounds/land
-@onready var attack_sound_good = $sounds/attack_good # Sound for on-beat attack
-@onready var attack_sound_bad = $sounds/attack_bad   # Sound for off-beat attack
+@onready var attack_sound_good = $sounds/attack_good
+@onready var attack_sound_bad = $sounds/attack_bad
 
 # Get the gravity from project settings
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
-#shit for the UI
+# --- UI References ---
 var root
 var UI
 var UI_ear_power
@@ -56,20 +64,16 @@ func _ready():
 	root = get_parent()
 	UI = root.find_child("UI")
 	UI_ear_power = UI.find_child("ear_power")
-	# Set up camera and mouse
+	
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	#cam_piv.top_level = true
-	#cam_piv.position = global_position
 
-	# --- Load the beat map and start the music ---
-	if ear_worm:
-		load_beat_map(default_worm.resource_path)
-		play_worm(default_worm)
-	else:
-		print("ERROR: AudioStreamPlayer node 'ear_worm' is not assigned!")
+	# Load the beat map and start the music
+	load_beat_map(default_worm.resource_path)
+	play_worm(default_worm)
 
 
 func update_ui():
+	# The UI power bar will now reflect the general "on-beat" feeling.
 	UI_ear_power.value = current_beat_accuracy * 100
 	if current_beat_accuracy > .9:
 		brain_light.light_energy = 3
@@ -78,40 +82,31 @@ func update_ui():
 
 func _process(delta: float) -> void:
 	update_ui()
+	
+	# This function still runs to give the player a general sense of the beat for the UI
+	if ear_worm and ear_worm.playing:
+		update_beat_accuracy_for_visuals()
+
 # --- Main Game Loop ---
 func _physics_process(delta):
-	# Always calculate the potential attack accuracy based on the beat map.
-	if ear_worm and ear_worm.playing:
-		update_beat_accuracy()
-
-	# Handle core physics (gravity, landing, etc.)
 	handle_basic_physics(delta)
-	
-	# Process player controls for movement and actions
 	handle_movement_controls(delta)
-	
-	# Update timers
 	update_timers(delta)
-	
-	# Apply final movement
 	move_and_slide()
 
 # --- Input Handling ---
 func _unhandled_input(event):
-	# Mouse look
 	if event is InputEventMouseMotion:
 		cam_piv.rotate_y(-event.relative.x * 0.005)
 		camera_arm.rotate_x(-event.relative.y * 0.005)
 		camera_arm.rotation.x = clamp(camera_arm.rotation.x, -PI/2.1, PI/2.1)
 
-	# Jump input
 	if event.is_action_pressed("jump"):
 		if is_on_floor() or coyote_timer > 0:
 			perform_jump()
 		else:
 			jump_buffer_timer = JUMP_BUFFER_TIME
 
-	# Attack input
 	if event.is_action_pressed("attack"):
 		perform_psychic_swipe()
 
@@ -139,7 +134,6 @@ func handle_movement_controls(delta):
 		velocity.x = direction.x * speed
 		velocity.z = direction.z * speed
 		
-		# Rotate mesh to face movement direction
 		var target_angle = atan2(direction.x, direction.z)
 		mesh.rotation.y = lerp_angle(mesh.rotation.y, target_angle, delta * ROTATION_SPEED)
 		
@@ -165,14 +159,22 @@ func perform_jump():
 func perform_psychic_swipe():
 	action_state = ActionState.ATTACK
 	
-	# *** RHYTHM MECHANIC INTEGRATION ***
-	# Check the beat accuracy to determine the attack's quality.
-	if current_beat_accuracy > 0.75: # Threshold for a "good" hit
-		print("ON-BEAT SWIPE! Accuracy: ", current_beat_accuracy)
+	# *** NEW RHYTHM MECHANIC INTEGRATION ***
+	# Get the judgment based on the timing windows.
+	var judgment = get_hit_judgment()
+	last_hit_judgment = judgment # Store for other game logic if needed
+	
+	# Check the judgment to determine the attack's quality.
+	if judgment == "Perfect" or judgment == "Great":
+		print("ON-BEAT SWIPE! Judgment: ", judgment)
 		attack_sound_good.play()
 		# --- TODO: Trigger your powerful, wide-arc attack animation/effect here ---
-	else:
-		print("Off-beat swipe. Accuracy: ", current_beat_accuracy)
+	elif judgment == "Good":
+		print("Okay swipe. Judgment: ", judgment)
+		attack_sound_good.play() # Maybe a slightly less impactful sound?
+		# --- TODO: Trigger a standard attack ---
+	else: # Miss
+		print("Off-beat swipe. Judgment: ", judgment)
 		attack_sound_bad.play()
 		# --- TODO: Trigger your weak, small fizzle effect here ---
 
@@ -184,54 +186,125 @@ func take_damage(knockback_direction: Vector3):
 	is_invulnerable = true
 	damage_invulnerability_timer = DAMAGE_INVULNERABILITY_TIME
 	velocity = knockback_direction * KNOCKBACK_FORCE
-	velocity.y = jump_velocity * 0.5 # Pop up slightly when hit
+	velocity.y = jump_velocity * 0.5
 	action_state = ActionState.HURT
 
-# --- Rhythmic Logic (from original script) ---
+# --- Rhythmic Logic ---
 
 func load_beat_map(audio_path: String):
 	beat_times.clear()
 	var beat_map_path = audio_path.get_base_dir() + "/" + audio_path.get_file().get_basename() + ".beats"
 	
-	if not FileAccess.file_exists(beat_map_path):
-		print("Beat map not found! Expected at: ", beat_map_path)
-		return
-
 	var file = FileAccess.open(beat_map_path, FileAccess.READ)
 	while not file.eof_reached():
 		var line = file.get_line()
 		if not line.is_empty():
 			beat_times.append(line.to_float())
 	file.close()
-	print("Loaded ", beat_times.size(), " beats.")
 
 func play_worm(this_slappable: AudioStream):
 	next_beat_index = 0
+	hit_beat_indices.clear() # Reset hit tracking for the new song
 	ear_worm.stream = this_slappable
 	ear_worm.play()
 
-func update_beat_accuracy():
+# --- REVISED: This function now uses dynamic windows and prevents spamming ---
+func get_hit_judgment() -> String:
+	if beat_times.size() < 2 or not ear_worm.playing:
+		return "Miss"
+
+	var song_position = ear_worm.get_playback_position()
+	
+	# --- Find the closest beat and its index ---
+	var closest_beat_index = -1
+	var min_diff = 1000.0 # Start with a large number
+	var search_start = max(0, next_beat_index - 5)
+	var search_end = min(beat_times.size(), next_beat_index + 5)
+	for i in range(search_start, search_end):
+		var diff = abs(beat_times[i] - song_position)
+		if diff < min_diff:
+			min_diff = diff
+			closest_beat_index = i
+
+	# If no beat is reasonably close, it's a miss.
+	if closest_beat_index == -1:
+		return "Miss"
+		
+	# --- Check if this beat has already been hit ---
+	if closest_beat_index in hit_beat_indices:
+		return "Miss"
+
+	# --- Calculate the dynamic hittable window for this specific beat ---
+	var current_beat_time = beat_times[closest_beat_index]
+	var prev_beat_time
+	var next_beat_time
+
+	# Handle edge cases for the first and last beats
+	if closest_beat_index == 0: # First beat
+		prev_beat_time = current_beat_time - (beat_times[1] - current_beat_time)
+	else:
+		prev_beat_time = beat_times[closest_beat_index - 1]
+
+	if closest_beat_index == beat_times.size() - 1: # Last beat
+		next_beat_time = current_beat_time + (current_beat_time - prev_beat_time)
+	else:
+		next_beat_time = beat_times[closest_beat_index + 1]
+	
+	var interval = (next_beat_time - prev_beat_time) / 2.0
+	var hittable_window_half_size = interval * hittable_window_ratio
+
+	# --- Check if the hit is outside the dynamic hittable window ---
+	var time_difference = abs(current_beat_time - song_position)
+	if time_difference > hittable_window_half_size:
+		return "Miss"
+	
+	# --- Determine judgment based on ratios of the hittable window ---
+	var judgment = "Miss"
+	var perfect_window = hittable_window_half_size * PERFECT_RATIO
+	var great_window = hittable_window_half_size * GREAT_RATIO
+	
+	if time_difference <= perfect_window:
+		judgment = "Perfect"
+	elif time_difference <= great_window:
+		judgment = "Great"
+	else:
+		judgment = "Good"
+		
+	# --- Register the successful hit and return judgment ---
+	hit_beat_indices.append(closest_beat_index)
+	return judgment
+
+
+# --- This function is for the continuous UI bar ---
+func update_beat_accuracy_for_visuals():
 	if beat_times.is_empty():
 		current_beat_accuracy = 0.0
 		return
 
 	var song_position = ear_worm.get_playback_position()
 	
+	# Advance the beat index
 	while next_beat_index < beat_times.size() and beat_times[next_beat_index] < song_position:
+		# When we pass a beat that we didn't hit, remove it from future consideration
+		# to prevent it from being hit late.
+		if not next_beat_index in hit_beat_indices:
+			hit_beat_indices.append(next_beat_index)
 		next_beat_index += 1
+
+	if next_beat_index >= beat_times.size():
+		current_beat_accuracy = 0.0
+		return
 
 	var prev_beat_time = 0.0
 	if next_beat_index > 0:
 		prev_beat_time = beat_times[next_beat_index - 1]
 	
-	var next_beat_time = beat_times[-1]
-	if next_beat_index < beat_times.size():
-		next_beat_time = beat_times[next_beat_index]
+	var next_beat_time = beat_times[next_beat_index]
 		
 	var offset = min(song_position - prev_beat_time, next_beat_time - song_position)
 	var interval = next_beat_time - prev_beat_time
 	
-	if interval == 0:
+	if interval <= 0.001:
 		current_beat_accuracy = 1.0
 		return
 		
