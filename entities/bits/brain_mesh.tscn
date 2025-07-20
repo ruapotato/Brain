@@ -1,17 +1,65 @@
-[gd_scene load_steps=3 format=3 uid="uid://chnuroc4smvjv"]
+[gd_scene load_steps=9 format=3 uid="uid://chnuroc4smvjv"]
 
-[ext_resource type="Material" uid="uid://d1bnil14tbabk" path="res://native/brain.tres" id="1_ehl23"]
+[ext_resource type="PackedScene" uid="uid://cst4q8c4i707y" path="res://import/brain.glb" id="1_ehl23"]
+[ext_resource type="PackedScene" uid="uid://hjebrv1nknaq" path="res://import/hair.glb" id="2_hnfr6"]
 
-[sub_resource type="SphereMesh" id="SphereMesh_e6i00"]
-radius = 0.275
-height = 1.03
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ehl23"]
+blend_mode = 3
+cull_mode = 1
+grow = true
+grow_amount = 0.002
 
-[node name="MeshInstance3D" type="MeshInstance3D"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -0.0646541, 0, 0)
-material_override = ExtResource("1_ehl23")
-mesh = SubResource("SphereMesh_e6i00")
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hnfr6"]
+next_pass = SubResource("StandardMaterial3D_ehl23")
+transparency = 3
+alpha_hash_scale = 1.0
+alpha_antialiasing_mode = 0
+cull_mode = 2
+albedo_color = Color(1, 0, 0, 0.701961)
+metallic_specular = 0.19
+roughness = 0.08
+emission = Color(0.419608, 0, 0, 1)
+rim_enabled = true
+subsurf_scatter_strength = 1.0
+subsurf_scatter_skin_mode = true
+backlight_enabled = true
+backlight = Color(0.787542, 4.16331e-06, 5.77569e-07, 1)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.126427, 0, 0)
-material_override = ExtResource("1_ehl23")
-mesh = SubResource("SphereMesh_e6i00")
+[sub_resource type="Gradient" id="Gradient_hnfr6"]
+offsets = PackedFloat32Array(0.131148, 0.286885, 1)
+colors = PackedColorArray(0.909432, 0.633291, 0.214666, 1, 0.020088, 0.0128554, 0.0014932, 0.0737705, 0, 0, 0, 0)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_0ds73"]
+frequency = 0.5351
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_rfi0b"]
+height = 1
+color_ramp = SubResource("Gradient_hnfr6")
+noise = SubResource("FastNoiseLite_0ds73")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0ds73"]
+transparency = 3
+alpha_hash_scale = 1.0
+alpha_antialiasing_mode = 0
+cull_mode = 2
+albedo_texture = SubResource("NoiseTexture2D_rfi0b")
+metallic = 1.0
+roughness = 0.34
+
+[node name="brain" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0.00454715, 0, 0)
+
+[node name="brain" parent="." instance=ExtResource("1_ehl23")]
+transform = Transform3D(-3.885, -1.93781e-07, -3.91561e-07, 3.28065e-07, 1.00551, -3.75262, 2.88521e-07, -3.75262, -1.00551, 0, 0, 0)
+
+[node name="Brain" parent="brain" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_hnfr6")
+
+[node name="hair" parent="." instance=ExtResource("2_hnfr6")]
+transform = Transform3D(1.81, 0, 0, 0, -6.11959e-08, 1.55, 0, -1.4, -6.77527e-08, 0, 0.0488476, -0.19742)
+
+[node name="hero_hair" parent="hair" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_0ds73")
+
+[editable path="brain"]
+[editable path="hair"]

@@ -1,14 +1,27 @@
-[gd_scene load_steps=16 format=3 uid="uid://cvrbj2ev3xxci"]
+[gd_scene load_steps=18 format=3 uid="uid://cvrbj2ev3xxci"]
 
 [ext_resource type="PackedScene" uid="uid://chnuroc4smvjv" path="res://entities/bits/brain_mesh.tscn" id="1_lqkhv"]
 [ext_resource type="Script" uid="uid://yuepbx88hcnk" path="res://entities/brain_walker.gd" id="1_wb4lt"]
 [ext_resource type="Script" uid="uid://lxkxt6c3xo3e" path="res://entities/bits/legs.gd" id="3_qf6st"]
+[ext_resource type="PrismMesh" uid="uid://6ojweuud02km" path="res://native/size_of_swipe.tres" id="4_k64bv"]
 [ext_resource type="AudioStream" uid="uid://h0t44k24ssa4" path="res://audio/player_die.wav" id="4_pcwwf"]
 [ext_resource type="AudioStream" uid="uid://nh5tcl3dr3v8" path="res://audio/player_toe_tip.wav" id="5_wtkin"]
 [ext_resource type="AudioStream" uid="uid://cyfkojsywoyr2" path="res://audio/sword.wav" id="6_wtkin"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_k64bv"]
-radius = 1.0
+radius = 2.675
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_k64bv"]
+size = Vector3(3, 3, 3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wtkin"]
+transparency = 1
+cull_mode = 2
+albedo_color = Color(0, 0, 0, 0.270588)
+metallic = 1.0
+roughness = 0.0
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
 
 [sub_resource type="Gradient" id="Gradient_wtkin"]
 
@@ -16,49 +29,61 @@ radius = 1.0
 gradient = SubResource("Gradient_wtkin")
 
 [sub_resource type="Curve" id="Curve_wtkin"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.316177, 0.629214), -3.28256, -3.28256, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0.730337), 0.0, 0.0, 0, 0, Vector2(0.904412, 0), -1.4788, -1.4788, 0, 0, Vector2(1, 0.0561798), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="CurveTexture" id="CurveTexture_k64bv"]
 curve = SubResource("Curve_wtkin")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_squdk"]
+direction = Vector3(0, -3.885, -1)
 spread = 0.0
+initial_velocity_min = 1.0
+initial_velocity_max = 1.0
 gravity = Vector3(0, 0, 0)
 scale_curve = SubResource("CurveTexture_k64bv")
 color_ramp = SubResource("GradientTexture1D_k64bv")
 
-[sub_resource type="SphereMesh" id="SphereMesh_squdk"]
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_wtkin"]
-size = Vector3(0.47, 0.665, 0.355)
+size = Vector3(0.47, 0.547552, 0.355)
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_wtkin"]
+radius = 0.405
 
-[node name="brain_walker" type="CharacterBody3D"]
+[node name="brain_walker" type="CharacterBody3D" groups=["player"]]
 script = ExtResource("1_wb4lt")
 
 [node name="mesh" parent="." instance=ExtResource("1_lqkhv")]
 
 [node name="legs" type="Node3D" parent="mesh"]
-transform = Transform3D(-1, -8.74228e-08, 3.82137e-15, 0, -4.37114e-08, -1, 8.74228e-08, -1, 4.37114e-08, 0.0646541, 1.88716e-08, 0.431731)
+transform = Transform3D(-1, -8.74228e-08, 3.82137e-15, 0, -4.37114e-08, -1, 8.74228e-08, -1, 4.37114e-08, 0, -4.72935e-09, 0.055805)
 script = ExtResource("3_qf6st")
 
 [node name="psychic_swipe_area" type="Area3D" parent="mesh"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0.0646541, 1.58182, -6.91436e-08)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="mesh/psychic_swipe_area"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.832595)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="mesh/psychic_swipe_area"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 2.83896)
+visible = false
+mesh = ExtResource("4_k64bv")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="mesh/psychic_swipe_area"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0.798804)
 shape = SubResource("SphereShape3D_k64bv")
 
+[node name="CollisionShape3D" type="CollisionShape3D" parent="mesh/psychic_swipe_area"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0, 0, 2.70596)
+shape = SubResource("BoxShape3D_k64bv")
+
 [node name="swipe_vfx" type="GPUParticles3D" parent="mesh"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.810736, -3.54384e-08)
+transform = Transform3D(0.999237, 0.0383006, 0.00761638, 0.0390505, -0.980047, -0.19489, -1.70695e-09, 0.195039, -0.980796, 0, 3.15953, -0.678439)
+material_override = SubResource("StandardMaterial3D_wtkin")
 emitting = false
 amount = 1
 lifetime = 0.3
 one_shot = true
 process_material = SubResource("ParticleProcessMaterial_squdk")
-draw_pass_1 = SubResource("SphereMesh_squdk")
+draw_pass_1 = ExtResource("4_k64bv")
 
 [node name="ear_worm" type="AudioStreamPlayer" parent="."]
 autoplay = true
@@ -66,6 +91,7 @@ autoplay = true
 [node name="piv" type="Node3D" parent="."]
 
 [node name="SpringArm3D" type="SpringArm3D" parent="piv"]
+spring_length = 2.0
 
 [node name="Camera3D" type="Camera3D" parent="piv/SpringArm3D"]
 
@@ -86,7 +112,7 @@ stream = ExtResource("6_wtkin")
 stream = ExtResource("5_wtkin")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.557593, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.214632, 0)
 shape = SubResource("BoxShape3D_wtkin")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
@@ -94,4 +120,6 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 
 shape = SubResource("SphereShape3D_wtkin")
 
 [node name="brain_light" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.705867, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0359569, 0.06023)
+light_color = Color(1, 0, 0, 1)
+light_volumetric_fog_energy = 0.07

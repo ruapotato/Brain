@@ -3,7 +3,7 @@
 extends CharacterBody3D
 
 # --- Player Movement Variables ---
-@export var speed = 5.0
+@export var speed = 8.0
 @export var jump_velocity = 6.0
 @onready var legs = $mesh/legs
 const ACCELERATION = 30.0

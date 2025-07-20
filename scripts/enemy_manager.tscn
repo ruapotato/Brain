@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://bqomi6uvxqewk"]
+
+[ext_resource type="Script" uid="uid://c07kqslql3u8h" path="res://scripts/enemy_manager.gd" id="1_fp05d"]
+[ext_resource type="PackedScene" uid="uid://d30yfh62gmyi2" path="res://entities/enemy.tscn" id="2_m74g8"]
+
+[node name="EnemyManager" type="Node3D"]
+script = ExtResource("1_fp05d")
+enemy_scene = ExtResource("2_m74g8")

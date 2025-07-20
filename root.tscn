@@ -1,11 +1,45 @@
-[gd_scene load_steps=5 format=3 uid="uid://cr4x7sx7v2i0c"]
+[gd_scene load_steps=9 format=3 uid="uid://cr4x7sx7v2i0c"]
 
 [ext_resource type="PackedScene" uid="uid://dkauhonwa2xo3" path="res://levels/level_1_brain.tscn" id="1_pq8q7"]
 [ext_resource type="PackedScene" uid="uid://cvrbj2ev3xxci" path="res://entities/brain_walker.tscn" id="2_pyidc"]
 [ext_resource type="PackedScene" uid="uid://cusci4h5y66kd" path="res://interface/ui.tscn" id="3_vvh5c"]
 [ext_resource type="PackedScene" uid="uid://cp3tfcsdvqea1" path="res://entities/chicken_spirit.tscn" id="4_28aoi"]
+[ext_resource type="PackedScene" uid="uid://bqomi6uvxqewk" path="res://scripts/enemy_manager.tscn" id="5_jnlp7"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_28aoi"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+sky_energy_multiplier = 0.0
+ground_bottom_color = Color(0, 0, 0, 1)
+ground_horizon_color = Color(0, 0, 0, 1)
+ground_energy_multiplier = 0.0
+
+[sub_resource type="Sky" id="Sky_jnlp7"]
+sky_material = SubResource("ProceduralSkyMaterial_28aoi")
+
+[sub_resource type="Environment" id="Environment_l8v81"]
+background_mode = 2
+sky = SubResource("Sky_jnlp7")
+ambient_light_sky_contribution = 0.0
+ambient_light_energy = 0.0
+tonemap_mode = 2
+glow_enabled = true
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.3474
+volumetric_fog_emission_energy = 0.0
+volumetric_fog_gi_inject = 0.0
+volumetric_fog_anisotropy = -0.9
+volumetric_fog_length = 365.59
+volumetric_fog_detail_spread = 6.0
+volumetric_fog_ambient_inject = 0.61
 
 [node name="root" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_l8v81")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
 
 [node name="level" type="Node3D" parent="."]
 
@@ -17,3 +51,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.03101, 0)
 [node name="UI" parent="." instance=ExtResource("3_vvh5c")]
 
 [node name="chicken_spirit" parent="." instance=ExtResource("4_28aoi")]
+
+[node name="EnemyManager" parent="." instance=ExtResource("5_jnlp7")]

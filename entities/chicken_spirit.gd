@@ -34,13 +34,12 @@ var is_ending_possession = false  # Flag to prevent re-entry during end sequence
 var is_possessed = false
 var wing_time = 0.0
 var is_speaking = false
+var root
 
 func _ready():
 	# Get player reference
-	player = get_parent()
-	var level_loader = player.get_parent()
-	player.call_deferred("remove_child", self)
-	level_loader.call_deferred("add_child", self)
+	root = get_parent()
+	player = root.find_child("player")
 	
 
 	# Camera setup

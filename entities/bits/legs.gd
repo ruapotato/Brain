@@ -135,7 +135,8 @@ func create_leg_mesh(name: String, offset: float) -> Node3D:
 	if is_chicken:
 		leg_material.albedo_color = Color(0.8, 0.6, 0.0)  # Slightly darker yellow for legs
 	else:
-		leg_material.albedo_color = Color.BLACK
+		leg_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_HASH
+		leg_material.albedo_color = Color(0, 0, 0, .3)
 	
 	leg.material_override = leg_material
 	leg.position = Vector3(0, -LEG_LENGTH/2, 0)

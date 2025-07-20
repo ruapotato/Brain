@@ -1,0 +1,5 @@
+[gd_resource type="PrismMesh" format=3 uid="uid://6ojweuud02km"]
+
+[resource]
+lightmap_size_hint = Vector2i(61, 98)
+size = Vector3(9.26, 8.095, 2.23)
