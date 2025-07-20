@@ -1,24 +1,24 @@
 [gd_scene load_steps=4 format=3 uid="uid://dy2oq8bnl2gb8"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tjhec"]
-albedo_color = Color(0, 0, 0, 1)
-metallic = 1.0
-roughness = 0.0
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_tjhec"]
+friction = 0.28
+bounce = 0.5
 
-[sub_resource type="QuadMesh" id="QuadMesh_tjhec"]
-material = SubResource("StandardMaterial3D_tjhec")
-size = Vector2(900, 900)
+[sub_resource type="CylinderMesh" id="CylinderMesh_tjhec"]
+top_radius = 30.0
+bottom_radius = 30.0
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_m65g4"]
-size = Vector3(900, 1, 900)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_m65g4"]
+radius = 30.0
 
 [node name="platform_1" type="StaticBody3D"]
+physics_material_override = SubResource("PhysicsMaterial_tjhec")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
-mesh = SubResource("QuadMesh_tjhec")
+transform = Transform3D(1, 0, 0, 0, -1, -8.74228e-08, 0, 8.74228e-08, -1, 0, -1, 0)
+mesh = SubResource("CylinderMesh_tjhec")
 skeleton = NodePath("../..")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.509609, 0)
-shape = SubResource("BoxShape3D_m65g4")
+transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, 0, -1, 0)
+shape = SubResource("CylinderShape3D_m65g4")
