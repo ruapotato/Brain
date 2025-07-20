@@ -46,10 +46,11 @@ shadow_enabled = true
 [node name="level_1_brain" parent="level" instance=ExtResource("1_pq8q7")]
 
 [node name="player" parent="." instance=ExtResource("2_pyidc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.03101, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.71641, 0)
 
 [node name="UI" parent="." instance=ExtResource("3_vvh5c")]
 
 [node name="chicken_spirit" parent="." instance=ExtResource("4_28aoi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.54436, 0)
 
 [node name="EnemyManager" parent="." instance=ExtResource("5_jnlp7")]

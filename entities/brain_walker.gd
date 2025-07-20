@@ -62,8 +62,8 @@ var knockback: Vector3 = Vector3.ZERO
 @onready var land_sound = $sounds/land
 @onready var attack_sound_good = $sounds/attack_good
 @onready var attack_sound_bad = $sounds/attack_bad
-@onready var psychic_swipe_area = $mesh/psychic_swipe_area
-@onready var swipe_vfx = $mesh/swipe_vfx
+@onready var psychic_swipe_area = $piv/SpringArm3D/psychic_swipe_area
+@onready var swipe_vfx = $piv/SpringArm3D/psychic_swipe_area/CollisionShape3D/swipe_vfx
 
 # Get the gravity from project settings
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -244,8 +244,11 @@ func perform_psychic_swipe():
 
 
 func trigger_swipe_vfx(radius: float, color: Color):
-	var material = swipe_vfx.process_material as ParticleProcessMaterial
-	material.color = color
+	swipe_vfx.material_override.emission = color
+	print(radius)
+	swipe_vfx.material_override.emission_energy_multiplier = radius / 5
+	#material.color = color
+	#swipe_vfx.material_override = material
 	swipe_vfx.scale = Vector3.ONE * radius
 	swipe_vfx.restart()
 
