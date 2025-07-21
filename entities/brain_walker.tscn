@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://cvrbj2ev3xxci"]
+[gd_scene load_steps=12 format=3 uid="uid://cvrbj2ev3xxci"]
 
 [ext_resource type="PackedScene" uid="uid://chnuroc4smvjv" path="res://entities/bits/brain_mesh.tscn" id="1_lqkhv"]
 [ext_resource type="Script" uid="uid://yuepbx88hcnk" path="res://entities/brain_walker.gd" id="1_wb4lt"]
@@ -13,35 +13,6 @@ radius = 2.675
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_k64bv"]
 size = Vector3(3, 3, 3)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wtkin"]
-transparency = 1
-cull_mode = 2
-albedo_color = Color(0, 0, 0, 0.270588)
-metallic = 1.0
-roughness = 0.0
-emission_enabled = true
-
-[sub_resource type="Gradient" id="Gradient_wtkin"]
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_k64bv"]
-gradient = SubResource("Gradient_wtkin")
-
-[sub_resource type="Curve" id="Curve_wtkin"]
-_data = [Vector2(0, 0.730337), 0.0, 0.0, 0, 0, Vector2(0.904412, 0), -1.4788, -1.4788, 0, 0, Vector2(1, 0.0561798), 0.0, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="CurveTexture" id="CurveTexture_k64bv"]
-curve = SubResource("Curve_wtkin")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_squdk"]
-direction = Vector3(0, -3.885, -1)
-spread = 0.0
-initial_velocity_min = 1.0
-initial_velocity_max = 1.0
-gravity = Vector3(0, 0, 0)
-scale_curve = SubResource("CurveTexture_k64bv")
-color_ramp = SubResource("GradientTexture1D_k64bv")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wtkin"]
 size = Vector3(0.47, 0.547552, 0.355)
@@ -84,15 +55,8 @@ shape = SubResource("SphereShape3D_k64bv")
 transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, -0.0323271, -3.55271e-14, -6.66225)
 shape = SubResource("BoxShape3D_k64bv")
 
-[node name="swipe_vfx" type="GPUParticles3D" parent="piv/SpringArm3D/psychic_swipe_area/CollisionShape3D"]
-transform = Transform3D(0.678954, 0.72008, 0.143194, 1.0472e-09, -0.195039, 0.980796, 0.73418, -0.665915, -0.132422, 0.752075, 0.678439, -0.84351)
-material_override = SubResource("StandardMaterial3D_wtkin")
-emitting = false
-amount = 1
-lifetime = 0.3
-one_shot = true
-process_material = SubResource("ParticleProcessMaterial_squdk")
-draw_pass_1 = ExtResource("4_k64bv")
+[node name="swipe_vfx" type="Node3D" parent="piv/SpringArm3D/psychic_swipe_area/CollisionShape3D"]
+transform = Transform3D(0.678954, 0.72008, 0.143194, 1.0472e-09, -0.195039, 0.980796, 0.73418, -0.665915, -0.132422, 1.9994, 0.678439, -2.09084)
 
 [node name="sounds" type="Node3D" parent="."]
 

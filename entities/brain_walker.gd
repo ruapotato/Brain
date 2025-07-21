@@ -10,6 +10,7 @@ extends CharacterBody3D
 @export var speed = 8.0
 @export var jump_velocity = 6.0
 @onready var legs = $mesh/legs
+@onready var swipe_vfx_scene = preload("res://entities/bits/psychic_swipe_vfx.tscn")
 const FRICTION = 60.0
 const ROTATION_SPEED = 20.0
 const KNOCKBACK_FORCE = 12.0 # Increased for more impact
@@ -64,6 +65,7 @@ var knockback: Vector3 = Vector3.ZERO
 @onready var attack_sound_bad = $sounds/attack_bad
 @onready var psychic_swipe_area = $piv/SpringArm3D/psychic_swipe_area
 @onready var swipe_vfx = $piv/SpringArm3D/psychic_swipe_area/CollisionShape3D/swipe_vfx
+var vfx_instances = []
 
 # Get the gravity from project settings
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -244,13 +246,18 @@ func perform_psychic_swipe():
 
 
 func trigger_swipe_vfx(radius: float, color: Color):
-	swipe_vfx.material_override.emission = color
-	print(radius)
-	swipe_vfx.material_override.emission_energy_multiplier = radius / 5
+	vfx_instances.append(swipe_vfx_scene.instantiate())
+	# 2. Add it to the main scene tree.
+	swipe_vfx.add_child(vfx_instances[-1]) # Or get_parent().add_child()
+	# 4. Kick off its animation.
+	vfx_instances[-1].start_animation()
+	#swipe_vfx.material_override.emission = color
+	#print(radius)
+	#swipe_vfx.material_override.emission_energy_multiplier = radius / 5
 	#material.color = color
 	#swipe_vfx.material_override = material
-	swipe_vfx.scale = Vector3.ONE * radius
-	swipe_vfx.restart()
+	#swipe_vfx.scale = Vector3.ONE * radius
+	#swipe_vfx.restart()
 
 
 func damage(power: float, knockback_direction: Vector3):

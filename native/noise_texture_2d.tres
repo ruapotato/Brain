@@ -1,0 +1,15 @@
+[gd_resource type="NoiseTexture2D" load_steps=2 format=3 uid="uid://c8fmtdnwresea"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_hfk5x"]
+noise_type = 2
+fractal_type = 3
+fractal_octaves = 3
+fractal_lacunarity = 1.01
+fractal_gain = 0.085
+fractal_ping_pong_strength = 2.895
+domain_warp_enabled = true
+
+[resource]
+width = 1452
+height = 167
+noise = SubResource("FastNoiseLite_hfk5x")

@@ -1,0 +1,21 @@
+[gd_scene load_steps=6 format=3 uid="uid://c40cxi04e8sck"]
+
+[ext_resource type="Script" uid="uid://bu6von1gof28m" path="res://scripts/psychic_swipe_vfx.gd" id="1_hb24e"]
+[ext_resource type="Shader" uid="uid://sl4lgw0kw16e" path="res://native/psychicswipevfx.gdshader" id="2_5q5rb"]
+[ext_resource type="ArrayMesh" uid="uid://ct6qd38ev2vk" path="res://entities/bits/new_array_mesh.tres" id="2_r7h1f"]
+[ext_resource type="Texture2D" uid="uid://c8fmtdnwresea" path="res://native/noise_texture_2d.tres" id="3_r7h1f"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dn6f7"]
+render_priority = 0
+shader = ExtResource("2_5q5rb")
+shader_parameter/tint = Color(0.5, 1, 1, 1)
+shader_parameter/noise_texture = ExtResource("3_r7h1f")
+shader_parameter/dissolve_progress = 0.22
+
+[node name="PsychicSwipeVFX" type="Node3D"]
+script = ExtResource("1_hb24e")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.338, 0, 0, 0, -0.144, -1.41936e-08, 0, 2.17434e-08, -0.094, 0, 0, 0)
+mesh = ExtResource("2_r7h1f")
+surface_material_override/0 = SubResource("ShaderMaterial_dn6f7")
