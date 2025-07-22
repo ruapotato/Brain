@@ -63,8 +63,8 @@ var knockback: Vector3 = Vector3.ZERO
 @onready var land_sound = $sounds/land
 @onready var attack_sound_good = $sounds/attack_good
 @onready var attack_sound_bad = $sounds/attack_bad
-@onready var psychic_swipe_area = $piv/SpringArm3D/psychic_swipe_area
-@onready var swipe_vfx = $piv/SpringArm3D/psychic_swipe_area/CollisionShape3D/swipe_vfx
+@onready var psychic_swipe_area = $piv/psychic_swipe_area
+@onready var swipe_vfx = $piv/psychic_swipe_area/CollisionShape3D/swipe_vfx
 var vfx_instances = []
 
 # Get the gravity from project settings

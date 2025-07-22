@@ -1,23 +1,70 @@
 # PsychicSwipeVFX.gd
-# This script controls the lifecycle of the swipe effect.
-# It tweens the shader parameters and then frees itself.
+# This script controls the lifecycle of the swipe effect using _process.
+# It manually updates its position and shader, then frees itself.
 extends Node3D
+
+## The total distance the effect will travel along its local forward (-Z) axis.
+@export var travel_distance: float = 1.5
 
 @onready var mesh_instance: MeshInstance3D = $MeshInstance3D
 
-# This function starts the VFX animation. Call this right after you instantiate the scene.
-func start_animation():
-	# Ensure the material is unique to this instance so tweens don't affect other swipes.
-	#mesh_instance.material_override = mesh_instance.material_override.duplicate()
+# Animation constants
+const TOTAL_LIFETIME: float = 0.3
+const DISSOLVE_DELAY: float = 0.1
 
-	# A Tween is perfect for animating properties over time.
-	var tween = create_tween()
+# State variables for tracking animation progress
+var _is_animating: bool = false
+var _elapsed_time: float = 0.0
+var _start_position: Vector3
+var _target_position: Vector3
+
+func _ready():
+	# Disable processing by default. It's only needed when the animation is active.
+	set_process(false)
 	
-	# Animate the "dissolve_progress" uniform in the shader.
-	# It will go from 0.0 (fully visible) to 1.0 (fully dissolved) in 0.6 seconds.
-	# We'll give it a slight delay so the slash appears for a moment before dissolving.
-	tween.tween_property(mesh_instance.get_active_material(0), "shader_parameter/dissolve_progress", 1.0,0.6).from(0.0).set_delay(0.2)
+	# To prevent multiple VFX from animating the same material, we create a unique instance.
+	# This is crucial if you spawn more than one swipe at a time.
+	if mesh_instance.material_override:
+		mesh_instance.material_override = mesh_instance.material_override.duplicate()
+	else:
+		mesh_instance.material_override = mesh_instance.get_active_material(0).duplicate()
 
-	# Once the tween is finished, we connect it to the queue_free() method.
-	# This ensures the VFX scene cleans itself up automatically.
-	tween.finished.connect(queue_free)
+
+func _process(delta: float):
+	if not _is_animating:
+		return
+
+	# Increment the timer
+	_elapsed_time += delta
+
+	# --- Update Position ---
+	# Calculate movement progress (0.0 to 1.0) over the total lifetime
+	var move_progress = clamp(_elapsed_time / TOTAL_LIFETIME, 0.0, 1.0)
+	# Linearly interpolate the position from its start to the target
+	self.position = _start_position.lerp(_target_position, move_progress)
+
+	# --- Update Dissolve Shader ---
+	# Calculate how far into the dissolve we are (it starts after a delay)
+	var time_into_dissolve = _elapsed_time - DISSOLVE_DELAY
+	var dissolve_duration = TOTAL_LIFETIME - DISSOLVE_DELAY
+	# Calculate dissolve progress (0.0 to 1.0)
+	var dissolve_progress = clamp(time_into_dissolve / dissolve_duration, 0.0, 1.0)
+	# Update the shader uniform
+	mesh_instance.get_active_material(0).set_shader_parameter("dissolve_progress", dissolve_progress)
+
+	# --- Cleanup ---
+	# When the lifetime is over, remove the node from the scene
+	if _elapsed_time >= TOTAL_LIFETIME:
+		queue_free()
+
+
+# Call this function to start the VFX animation.
+func start_animation():
+	# Initialize state variables for the animation
+	_elapsed_time = 0.0
+	_start_position = self.position
+	_target_position = self.position - self.transform.basis.y * travel_distance
+	_is_animating = true
+	
+	# Enable the _process function to run the animation
+	set_process(true)

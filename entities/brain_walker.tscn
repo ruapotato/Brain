@@ -30,6 +30,7 @@ transform = Transform3D(-1, -8.74228e-08, 3.82137e-15, 0, -4.37114e-08, -1, 8.74
 script = ExtResource("3_qf6st")
 
 [node name="ear_worm" type="AudioStreamPlayer" parent="."]
+volume_db = -26.234
 autoplay = true
 
 [node name="piv" type="Node3D" parent="."]
@@ -39,24 +40,24 @@ spring_length = 2.0
 
 [node name="Camera3D" type="Camera3D" parent="piv/SpringArm3D"]
 
-[node name="psychic_swipe_area" type="Area3D" parent="piv/SpringArm3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0692012, 3.55271e-14, 1.58182)
+[node name="psychic_swipe_area" type="Area3D" parent="piv"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0692012, -0.0837994, 1.58182)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="piv/SpringArm3D/psychic_swipe_area"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="piv/psychic_swipe_area"]
 transform = Transform3D(-1, 8.74228e-08, 3.82137e-15, 0, -4.37114e-08, 1, 8.74228e-08, 1, 4.37114e-08, -0.0323271, -3.55271e-14, -6.79525)
 visible = false
 mesh = ExtResource("4_k64bv")
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="piv/SpringArm3D/psychic_swipe_area"]
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="piv/psychic_swipe_area"]
 transform = Transform3D(-1, 8.74228e-08, 3.82137e-15, 0, -4.37114e-08, 1, 8.74228e-08, 1, 4.37114e-08, -0.0323269, -3.55271e-14, -4.75509)
 shape = SubResource("SphereShape3D_k64bv")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="piv/SpringArm3D/psychic_swipe_area"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="piv/psychic_swipe_area"]
 transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, -0.0323271, -3.55271e-14, -6.66225)
 shape = SubResource("BoxShape3D_k64bv")
 
-[node name="swipe_vfx" type="Node3D" parent="piv/SpringArm3D/psychic_swipe_area/CollisionShape3D"]
-transform = Transform3D(0.678954, 0.72008, 0.143194, 1.0472e-09, -0.195039, 0.980796, 0.73418, -0.665915, -0.132422, 1.9994, 0.678439, -2.09084)
+[node name="swipe_vfx" type="Node3D" parent="piv/psychic_swipe_area/CollisionShape3D"]
+transform = Transform3D(0.678954, 0.72008, 0.143194, 1.0472e-09, -0.195039, 0.980796, 0.73418, -0.665915, -0.132422, 2.8975, 0.113425, -2.98894)
 
 [node name="sounds" type="Node3D" parent="."]
 
