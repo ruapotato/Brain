@@ -30,7 +30,6 @@ transform = Transform3D(-1, -8.74228e-08, 3.82137e-15, 0, -4.37114e-08, -1, 8.74
 script = ExtResource("3_qf6st")
 
 [node name="ear_worm" type="AudioStreamPlayer" parent="."]
-volume_db = -26.234
 autoplay = true
 
 [node name="piv" type="Node3D" parent="."]
